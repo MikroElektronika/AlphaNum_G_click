@@ -1,0 +1,73 @@
+{*
+Example for AlphaNum_G Click
+
+    Date          : Jun 2018.
+    Author        : Nenad Filipovic
+
+Test configuration AVR :
+    
+    MCU              : ATMEGA32
+    Dev. Board       : EasyAVR v7 
+    AVR Compiler ver : v7.0.1.0
+
+---
+
+Description :
+
+The application is composed of three sections :
+
+- System Initialization - Initializes peripherals and set pins.
+- Application Initialization - Initializes SPI driver and performs device configuration.
+- Application Task - (code snippet) Write text, special symbols and number on 14-segment display.
+
+Additional Functions :
+
+- SPI
+
+*}
+program Click_AlphaNum_G_AVR;
+
+uses Click_AlphaNum_G_types, Click_AlphaNum_G_config;
+
+procedure systemInit(); 
+begin
+
+    mikrobus_gpioInit(_MIKROBUS1, _MIKROBUS_CS_PIN, _GPIO_OUTPUT); 
+    mikrobus_gpioInit(_MIKROBUS1, _MIKROBUS_RST_PIN, _GPIO_OUTPUT); 
+    mikrobus_gpioInit(_MIKROBUS1, _MIKROBUS_PWM_PIN, _GPIO_OUTPUT); 
+    mikrobus_gpioInit(_MIKROBUS1, _MIKROBUS_INT_PIN, _GPIO_OUTPUT); 
+    mikrobus_spiInit(_MIKROBUS1, @_ALPHANUMG_SPI_CFG[0]); 
+    Delay_100ms(); 
+
+end;
+
+procedure applicationInit(); 
+begin
+
+    alphanumg_spiDriverInit(T_ALPHANUMG_P(@_MIKROBUS1_GPIO), T_ALPHANUMG_P(@_MIKROBUS1_SPI)); 
+
+end;
+
+procedure applicationTask(); 
+begin
+
+    alphanumg_setDisplayTime(1000); 
+    alphanumg_writeCharacter('M', 'E'); 
+    alphanumg_writeCharacter('@', '?'); 
+    alphanumg_writeNumber(0, 1); 
+    alphanumg_writeNumber(1, 2); 
+    alphanumg_writeNumber(2, 3); 
+    alphanumg_writeNumber(3, 4); 
+
+end;
+
+begin
+
+    systemInit(); 
+    applicationInit(); 
+    while (1) do 
+    begin 
+        applicationTask(); 
+    end;
+
+end.
